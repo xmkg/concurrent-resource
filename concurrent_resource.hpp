@@ -31,7 +31,7 @@
 
 
 
-#if !defined(MG_LOCKABLE_USE_BOOST_SHARED_MUTEX) && (__cplusplus >= 201703L)
+#if !defined(MKG_CONCURRENT_RESOURCE_USE_BOOST_SHARED_MUTEX) && (__cplusplus >= 201703L)
 #include <shared_mutex> // prerequisite : C++17
 namespace mkg{
     using shared_mutex_t = std::shared_mutex;
