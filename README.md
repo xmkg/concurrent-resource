@@ -47,7 +47,6 @@ int main(void){
 ~~~
 
 
-
 dependencies?
 ------------
 If you are working with the latest standard library (C++17), then you have nothing to worry about. Just grab and include the header. 
@@ -66,6 +65,18 @@ anything to worry about?
 Well, there is a single pitfall you should consider while using this library.
 
 * Do not try to grab two accessors from one thread at the same time. The reason for this is, std:: and boost:: shared mutexes are `non-reentrant` (non-recursive)
+
+pros
+------------
+* extremely easy to use
+* thread synchronization primitives are totally abstract from user's perspective
+* read-write rights are enforced through accessors, leading to safer code in many cases
+* raii style lifetime management
+
+cons
+------------
+* std::shared_mutex & boost::shared_mutex are not known as their blow-your-socks-off performance 
+
 
 future plans
 ------------
