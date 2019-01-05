@@ -54,7 +54,12 @@ If you are working with the latest standard library (C++17), then you have nothi
 For before C++17, library currently depends on BOOST to function. You can make it work with BOOST implementation instead in C++17 standard via defining 
 `MKG_CONCURRENT_RESOURCE_USE_BOOST_SHARED_MUTEX` macro before including the header.
 
-
+how to compile?
+------------
+As this is a `header-only` library, you do not need to do anything special. Just include `concurrent_resource.hpp` and you'll be fine. To compile `main.cpp`, which contains the examples, you need `CMake` (if you're lazy), or just type
+* C++17(std): g++ main.cpp -lpthread -o example     
+* BOOST : g++ main.cpp -lpthread -lboost_system -lboost_thread -o example
+in source folder. (or equivalent in Windows)
 
 anything to worry about?
 ------------
