@@ -75,7 +75,7 @@ pros
 
 cons
 ------------
-* std::shared_mutex & boost::shared_mutex are not known as their blow-your-socks-off performance 
+* std::shared_mutex & boost::shared_mutex are not known with their blow-your-socks-off performance (but they'll do `just fine ™` ) :shipit:
 
 
 future plans
