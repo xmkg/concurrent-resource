@@ -80,7 +80,7 @@ namespace mkg{
             constexpr member_access_operator_decorator(TypeToDecorate value)
                : value(value) 
                 {}
-            constexpr const decltype(auto) operator->() const noexcept { return &value; }
+            constexpr decltype(auto) operator->() const noexcept { return &value; }
         private:
             TypeToDecorate value;
         };
@@ -129,7 +129,7 @@ namespace mkg{
          */
         template<typename ResourceType>
         struct unsafe_accessor {
-            constexpr explicit unsafe_accessor(ResourceType resource) 
+            constexpr unsafe_accessor(ResourceType resource) 
                 : resource(resource)
             {}
             constexpr member_access_operator_decorator<ResourceType> operator->() noexcept 
@@ -146,6 +146,12 @@ namespace mkg{
         template<typename ResourceType>
         using write_accessor_base = accessor<write_lock, ResourceType&>;
 
+        template<typename ResourceType>
+        using unsafe_read_accessor_base =  unsafe_accessor<const ResourceType&> ;
+
+        template<typename ResourceType>
+        using unsafe_write_accessor_base = unsafe_accessor<ResourceType&>;
+
        
         template<typename ResourceType>
         struct read_accessor  : public read_accessor_base<ResourceType>
@@ -160,14 +166,17 @@ namespace mkg{
         };
 
 
-        template<typename ResourceType>
-        struct unsafe_read_accessor  : public unsafe_accessor<const ResourceType&>  
-        {};
+		template<typename ResourceType>
+		struct unsafe_read_accessor : public unsafe_read_accessor_base<ResourceType>
+		{
+			using unsafe_read_accessor_base<ResourceType>::unsafe_read_accessor_base;
+		};
 
-        template<typename ResourceType>
-        struct unsafe_write_accessor  : public unsafe_accessor<ResourceType&>  
-        {};
-
+		template<typename ResourceType>
+		struct unsafe_write_accessor : public unsafe_write_accessor_base<ResourceType>
+		{
+			using unsafe_write_accessor_base<ResourceType>::unsafe_write_accessor_base;
+		};
     }
 
     /**
@@ -218,14 +227,14 @@ namespace mkg{
          * 
          * @return detail::read_accessor<ResourceType>  Unsafe, read-only accessor to the resource.
          */
-        detail::read_accessor<ResourceType>     unsafe_read_access()   
+        detail::unsafe_read_accessor<ResourceType>     unsafe_read_access()   
         const noexcept { return {resource};  }
         /**
          * @brief Grab a read & write, NON-THREAD SAFE accessor to the resource.
          * Note that this does not acquire any thread synchronization primitives.
          * @return detail::write_accessor<ResourceType> Unsafe, read & write accessor to the resource.
          */
-        detail::write_accessor<ResourceType>    unsafe_write_access()  
+        detail::unsafe_write_accessor<ResourceType>    unsafe_write_access()  
         noexcept { return {resource};  }
     private:
         /**
