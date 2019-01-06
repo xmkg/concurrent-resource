@@ -22,7 +22,7 @@ int main(void){
   // Wrap a regular vector to make it thread-safe
   mkg::concurrent_resource<std::vector<std::string>> books;
   {
-    // This is a
+    // Grab a write accessor (we can manipulate the vector through it)
     auto writer = books.write_accessor();
     // Now, an exclusive lock is held upon the construction of write accessor
     // by std::unique_lock<std::shared_mutex>(...) (or boost::)
@@ -35,7 +35,7 @@ int main(void){
   // Here, right after the accessor object is destroyed (by going out of scope)
   // the lock is released. 
   {
-    // Grab read access
+    // Grab a read accessor (read-only, cannot modify the vector through it)
     auto reader = books.read_accessor();
     // Treat the accessors as if they're pointers to the underlying resource
     // (or std|boost::optional's if you will)
@@ -47,20 +47,36 @@ int main(void){
 ~~~
 
 
-
 dependencies?
 ------------
 If you are working with the latest standard library (C++17), then you have nothing to worry about. Just grab and include the header. 
 For before C++17, library currently depends on BOOST to function. You can make it work with BOOST implementation instead in C++17 standard via defining 
 `MKG_CONCURRENT_RESOURCE_USE_BOOST_SHARED_MUTEX` macro before including the header.
 
-
+how to compile?
+------------
+As this is a `header-only` library, you do not need to do anything special. Just include `concurrent_resource.hpp` and you'll be fine. To compile `main.cpp`, which contains the examples, you need `CMake` (if you're lazy), or just type
+* C++17(std): g++ main.cpp -lpthread -o example     
+* BOOST : g++ main.cpp -lpthread -lboost_system -lboost_thread -o example
+in source folder. (or equivalent in Windows)
 
 anything to worry about?
 ------------
 Well, there is a single pitfall you should consider while using this library.
 
 * Do not try to grab two accessors from one thread at the same time. The reason for this is, std:: and boost:: shared mutexes are `non-reentrant` (non-recursive)
+
+pros
+------------
+* extremely easy to use
+* thread synchronization primitives are totally abstract from user's perspective
+* read-write rights are enforced through accessors, leading to safer code in many cases
+* raii style lifetime management
+
+cons
+------------
+* std::shared_mutex & boost::shared_mutex are not known with their blow-your-socks-off performance (but they'll do `just fine ™` ) :shipit:
+
 
 future plans
 ------------
