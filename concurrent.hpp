@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <memory>
 #include <chrono>
 #include <type_traits>
 
