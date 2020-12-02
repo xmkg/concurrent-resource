@@ -13,17 +13,17 @@ Accessors are simple types, bundled with a reference to shared object, and a loc
 accessor's type (read,write). As they contain lock object internally, the lock is held during entire life of an accessor object's lifetime.
 
 ~~~cpp
-#include "concurrent_resource.hpp"
+#include "concurrent_stl.hpp" // or concurrent_boost.hpp
 #include <vector>
 #include <iostream>
 
 // A very-basic example
 int main(void){
   // Wrap a regular vector to make it thread-safe
-  mkg::concurrent_resource<std::vector<std::string>> books;
+  mkg::concurrent<std::vector<std::string>> books;
   {
     // Grab a write accessor (we can manipulate the vector through it)
-    auto writer = books.write_accessor();
+    auto writer = books.write_accessor_handle();
     // Now, an exclusive lock is held upon the construction of write accessor
     // by std::unique_lock<std::shared_mutex>(...) (or boost::)
     // We can reach the underlying vector by just ->'ing the writer.
@@ -36,7 +36,7 @@ int main(void){
   // the lock is released. 
   {
     // Grab a read accessor (read-only, cannot modify the vector through it)
-    auto reader = books.read_accessor();
+    auto reader = books.read_accessor_handle();
     // Treat the accessors as if they're pointers to the underlying resource
     // (or std|boost::optional's if you will)
     for(const auto & book : (*reader)){
@@ -49,15 +49,13 @@ int main(void){
 
 dependencies?
 ------------
-If you are working with the latest standard library (C++17), then you have nothing to worry about. Just grab and include the header. 
-For before C++17, library currently depends on BOOST to function. You can make it work with BOOST implementation instead in C++17 standard via defining 
-`MKG_CONCURRENT_RESOURCE_USE_BOOST_SHARED_MUTEX` macro before including the header.
+C++20 is required as project now uses `concepts`.
 
 how to compile?
 ------------
 As this is a `header-only` library, you do not need to do anything special. Just include `concurrent_resource.hpp` and you'll be fine. To compile `main.cpp`, which contains the examples, you need `CMake` (if you're lazy), or just type
-* C++17(std): g++ main.cpp -lpthread -o example     
-* BOOST : g++ main.cpp -lpthread -lboost_system -lboost_thread -o example
+* C++20(std): g++ main.cpp -lpthread -o example --std=c++2a   
+* BOOST : g++ main.cpp -lpthread -lboost_system -lboost_thread -o example --std=c++2a
 in source folder. (or equivalent in Windows)
 
 anything to worry about?
@@ -78,10 +76,15 @@ cons
 * std::shared_mutex & boost::shared_mutex are not known with their blow-your-socks-off performance (but they'll do `just fine ™` ) :shipit:
 
 
+what is the difference from the first release?
+------------
+- Concurrent type is now fully generic, you can now implement your custom Lockable and Lock types and use it with concurrent wrapper
+- Concept validation (via C++20 concepts)
+- Simplifications 
+
 future plans
 ------------
-* Remove BOOST dependency for pre-C++17
-* Add ability to prefer SRWLOCK instead of std::shared_mutex in Windows platform (see discussion at [stackoverflow](https://stackoverflow.com/questions/13206414/why-slim-reader-writer-exclusive-lock-outperformance-the-shared-one) )
+* well, most of the future plans are now obsolete, because this new release is abstract from any lock implementation.
 
 license
 ------------
