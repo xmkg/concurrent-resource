@@ -4,7 +4,7 @@ A header-only C++ library that allows easily creating thread-safe, concurrency f
 
 brief
 ------------
-The moral of this library is making it easier to create thread-safe objects without dealing with thread-synchronization primitives.
+The aim of this library is making it easier to create thread-safe objects without dealing with thread-synchronization primitives.
 To achieve this, we use encapsulation to restrict access to resource, then grant access again in a controlled manner via `accessor` pattern.
 
 accessors?
