@@ -23,7 +23,7 @@ int main(void){
   mkg::concurrent<std::vector<std::string>> books;
   {
     // Grab a write accessor (we can manipulate the vector through it)
-    auto writer = books.write_accessor_handle();
+    auto writer = books.write_access_handle();
     // Now, an exclusive lock is held upon the construction of write accessor
     // by std::unique_lock<std::shared_mutex>(...) (or boost::)
     // We can reach the underlying vector by just ->'ing the writer.
@@ -36,7 +36,7 @@ int main(void){
   // the lock is released. 
   {
     // Grab a read accessor (read-only, cannot modify the vector through it)
-    auto reader = books.read_accessor_handle();
+    auto reader = books.read_access_handle();
     // Treat the accessors as if they're pointers to the underlying resource
     // (or std|boost::optional's if you will)
     for(const auto & book : (*reader)){
