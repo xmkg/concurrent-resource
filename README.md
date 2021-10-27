@@ -2,6 +2,8 @@ concurrent-resource
 ============
 A header-only C++ library that allows easily creating thread-safe, concurrency friendly resources.
 
+[![Try online](https://img.shields.io/badge/try-online-brightgreen)](https://gcc.godbolt.org/z/Tc4EaG4bn)
+
 brief
 ------------
 The aim of this library is making it easier to create thread-safe objects without dealing with thread-synchronization primitives.
