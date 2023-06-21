@@ -211,6 +211,17 @@ namespace mkg {
         {}
 
         /**
+         * @brief Accessor object constructor
+         *
+         * @param resource  Resource to grant desired access to
+         * @param lock  Existing lock, which will be moved into the accessor
+         */
+        constexpr explicit accessor(LockType<LockableType> && lock, TypeQualifiedNonConcurrentType resource)
+            requires (std::is_rvalue_reference_v<decltype(lock)>)
+            : lock(std::forward<LockType<LockableType>>(lock)), locked_resource(resource)
+        {}
+
+        /**
          * @brief Class member access operator overload to behave as if
          * instance of `accessor` class is a `locked_resource` pointer.
          * 
